@@ -1,9 +1,290 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigBenShop</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        header {
+            background: #1e293b;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav {
+            background: #334155;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 15px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px #00000015;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: Arial;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .note {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .note p {
+            white-space: pre-wrap;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        .delete:hover {
+            background: #b91c1c;
+        }
+
+        .edit {
+            background: #475569;
+            margin-right: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+        }
+    </style>
 </head>
+
 <body>
+
+    <header>
+        <h1>BigBenShop</h1>
+        <p>Unser gemeinsames Projekt</p>
+    </header>
+
+    <nav>
+        <a href="#start">Startseite</a>
+        <a href="#notizen">Notizen</a>
+        <a href="#info">Info</a>
+    </nav>
+
+    <main>
+
+        <section class="card" id="start">
+            <h2>Willkommen bei BigBenShop!</h2>
+            <p>
+                Hier verwalten wir unsere Ideen,
+                Aufgaben und Notizen.
+            </p>
+        </section>
+
+        <section class="card" id="notizen">
+            <h2>Meine Notizen</h2>
+
+            <textarea
+                id="noteInput"
+                placeholder="Schreibe hier deine Notiz..."
+            ></textarea>
+
+            <button onclick="saveNote()">
+                Notiz speichern
+            </button>
+
+            <h3>Gespeicherte Notizen</h3>
+
+            <div id="notesList"></div>
+        </section>
+
+        <section class="card" id="info">
+            <h2>Über das Projekt</h2>
+            <p>
+                BigBenShop ist eine einfache Webseite,
+                die später mit einer Datenbank
+                verbunden werden kann.
+            </p>
+
+            <p id="syncStatus">
+                Speicherung: Lokal im Browser
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 BigBenShop</p>
+    </footer>
+
+    <script>
+        // Vorbereitung für spätere Datenbank-Anbindung
+        const STORAGE_KEY = "bigbenshop_notes";
+
+        const noteStorage = {
+            async getAll() {
+                return JSON.parse(
+                    localStorage.getItem(STORAGE_KEY) || "[]"
+                );
+            },
+
+            async saveAll(notes) {
+                localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify(notes)
+                );
+            }
+        };
+
+        let notes = [];
+
+        async function loadNotes() {
+            notes = await noteStorage.getAll();
+            displayNotes();
+        }
+
+        async function saveNote() {
+            const input = document.getElementById("noteInput");
+            const text = input.value.trim();
+
+            if (text === "") {
+                alert("Bitte schreibe eine Notiz!");
+                return;
+            }
+
+            const note = {
+                id: crypto.randomUUID(),
+                text: text,
+                createdAt: new Date().toISOString()
+            };
+
+            notes.push(note);
+
+            await noteStorage.saveAll(notes);
+
+            input.value = "";
+            displayNotes();
+        }
+
+        async function deleteNote(id) {
+            notes = notes.filter(note => note.id !== id);
+
+            await noteStorage.saveAll(notes);
+            displayNotes();
+        }
+
+        async function editNote(id) {
+            const note = notes.find(note => note.id === id);
+
+            if (!note) return;
+
+            const newText = prompt(
+                "Notiz bearbeiten:",
+                note.text
+            );
+
+            if (newText === null || newText.trim() === "") {
+                return;
+            }
+
+            note.text = newText.trim();
+
+            await noteStorage.saveAll(notes);
+            displayNotes();
+        }
+
+        function displayNotes() {
+            const list = document.getElementById("notesList");
+            list.innerHTML = "";
+
+            if (notes.length === 0) {
+                const message = document.createElement("p");
+                message.textContent = "Noch keine Notizen vorhanden.";
+                list.appendChild(message);
+                return;
+            }
+
+            notes.forEach(note => {
+                const div = document.createElement("div");
+                div.className = "note";
+
+                const text = document.createElement("p");
+                text.textContent = note.text;
+
+                const editButton = document.createElement("button");
+                editButton.className = "edit";
+                editButton.textContent = "Bearbeiten";
+                editButton.onclick = () => editNote(note.id);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.className = "delete";
+                deleteButton.textContent = "Löschen";
+                deleteButton.onclick = () => deleteNote(note.id);
+
+                div.appendChild(text);
+                div.appendChild(editButton);
+                div.appendChild(deleteButton);
+
+                list.appendChild(div);
+            });
+        }
+
+        loadNotes();
+    </script>
+
 </body>
 </html>
