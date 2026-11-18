@@ -1,0 +1,30 @@
+[
+  {
+    "id": "f1",
+    "name": "Bachforelle",
+    "category": "Süsswasser",
+    "description": "Ein heimischer Fisch aus klaren, kühlen Bächen.",
+    "imageUrl": "/images/forelle.svg"
+  },
+  {
+    "id": "f2",
+    "name": "Hecht",
+    "category": "Süsswasser",
+    "description": "Ein markanter Raubfisch aus Seen und Flüssen.",
+    "imageUrl": "/images/hecht.svg"
+  },
+  {
+    "id": "f3",
+    "name": "Karpfen",
+    "category": "Süsswasser",
+    "description": "Ein kräftiger Fisch, oft in ruhigen Gewässern anzutreffen.",
+    "imageUrl": "/images/karpfen.svg"
+  },
+  {
+    "id": "f4",
+    "name": "Zander",
+    "category": "Süsswasser",
+    "description": "Ein beliebter Fisch mit silbrig-schimmernden Schuppen.",
+    "imageUrl": "/images/zander.svg"
+  }
+]

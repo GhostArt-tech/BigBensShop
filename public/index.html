@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BigBenShop – Dein Fisch-Marktplatz</title>
+  <meta name="description" content="BigBenShop: Dein Marktplatz für Fisch- und Angelangebote.">
+  <link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#start"><span class="logo-icon">🐟</span><span>BigBen<span>Shop</span></span></a>
+    <nav class="nav" aria-label="Hauptnavigation"><a href="#fische">Fischarten</a><a href="#angebote">Marktplatz</a><a href="#anbieten">Angebot erstellen</a></nav>
+    <a class="header-action" href="#konto">Mein Konto ↗</a>
+  </header>
+  <section class="hero" id="start"><div class="hero-inner">
+    <div><span class="eyebrow">✦ Der Treffpunkt für Angelfans</span><h1>Dein Fang.<br><em>Dein Marktplatz.</em></h1><p>Entdecke Fischarten, stöbere in Angeboten und teile deine eigenen Funde mit unserer Community.</p>
+      <div class="hero-buttons"><a class="btn light" href="#angebote">Angebote entdecken →</a><a class="btn ghost" href="#anbieten">Jetzt anbieten</a></div>
+    </div>
+    <div class="hero-art" aria-hidden="true"><i class="bubble one"></i><i class="bubble two"></i><i class="bubble three"></i><img src="/images/hero-fish.svg" alt=""></div>
+  </div></section>
+  <main>
+    <div class="stats"><div class="stat"><span class="dot">🎣</span><span>Von Anglern<br><b>Für Angler</b></span></div><div class="stat"><span class="dot">🌊</span><span>Regional<br><b>Verbunden</b></span></div><div class="stat"><span class="dot">🐟</span><span>Shopartikel<br><b id="fish-count">–</b></span></div></div>
+    <section id="fische" class="reveal"><div class="section-top"><div><span class="kicker">Unsere Fischwelt</span><h2>Tierarten & Fischfutter</h2><p>Shopartikel und Community-Einträge aus unserer API. Tierpreise sind Beispielwerte, kein echtes Verkaufsangebot für geschützte Wildtiere.</p></div><div class="search-controls"><select id="category-filter" class="search" aria-label="Tiergruppe filtern"><option value="">Alle Kategorien</option><option>Amphibien</option><option>Knorpelfische</option><option>Knochenfische</option><option>Kopffüsser</option><option>Fischfutter</option><option>Süsswasser</option><option>Salzwasser</option><option>Angelzubehör</option><option>Sonstiges</option><option>Fischfutter</option></select><input id="search" class="search" type="search" placeholder="🔎 Artikel suchen …" aria-label="Artikel suchen"></div></div><div id="products" class="cards" aria-live="polite"></div></section>
+    <section class="divider-section reveal" id="angebote"><div class="section-top"><div><span class="kicker">Aus der Community</span><h2>Aktuelle Angebote</h2><p>Von Mitgliedern erstellt und automatisch im Artikelstamm ergänzt.</p></div><button class="btn small" id="refresh" type="button">↻ Aktualisieren</button></div><div id="offers" class="cards" aria-live="polite"></div></section>
+    <section class="workspace reveal" id="konto"><div><span class="kicker">Mitmachen</span><h2>Werde Teil der Community.</h2><p>Registriere dich oder melde dich an. Dein Konto wird mit sicher gehashtem Passwort gespeichert; die Anmeldung bleibt nach einem Serverneustart bestehen (bis zu 7 Tage).</p><div id="account-line" class="account-line">Nicht angemeldet</div><button id="logout" type="button" class="btn small hidden">Abmelden</button><p id="account-message" role="status" class="status hidden"></p></div>
+      <div class="panel" id="auth-panel"><div class="auth-grid">
+        <form id="register-form"><h3>Registrieren</h3><label class="field">Name<input id="reg-name" required minlength="2" autocomplete="name"></label><label class="field">E-Mail<input id="reg-email" type="email" required autocomplete="email"></label><label class="field">Passwort (mind. 12 Zeichen)<input id="reg-password" type="password" minlength="12" required autocomplete="new-password"></label><button class="btn" type="submit">Registrieren</button></form>
+        <form id="login-form"><h3>Anmelden</h3><label class="field">E-Mail<input id="login-email" type="email" required autocomplete="email"></label><label class="field">Passwort<input id="login-password" type="password" required autocomplete="current-password"></label><button class="btn" type="submit">Einloggen</button></form>
+      </div></div>
+    </section>
+    <section class="workspace reveal" id="anbieten"><div><span class="kicker">Dein eigener Eintrag</span><h2>Community-Angebot erstellen</h2><p>Beschreibe dein Angebot frei und füge ein Foto hinzu. Nach dem Speichern erscheint es im Marktplatz und im Artikelstamm. Verkäufer und Admins können ein Angebot wieder löschen.</p><p>Erlaubte Bilder: JPG, PNG oder WEBP (max. 2 MB).</p></div>
+      <form id="offer-form" class="panel"><h3>Neues Angebot</h3><label class="field">Name / Titel<input id="offer-title" placeholder="z. B. Schöne Bachforelle" required minlength="3" maxlength="100"></label><label class="field">Kategorie<select id="offer-category"><option>Süsswasser</option><option>Salzwasser</option><option>Angelzubehör</option><option>Sonstiges</option><option>Fischfutter</option></select></label><label class="field">Beschreibung (Freitext)<textarea id="offer-description" placeholder="Beschreibe dein Angebot …" minlength="5" maxlength="1500" required></textarea></label><label class="field">Preis in CHF<input id="offer-price" type="number" min="0.01" max="100000" step="0.01" required placeholder="29.90"></label><label class="field">Bild hochladen<div class="file-area"><input id="offer-image" type="file" accept="image/png,image/jpeg,image/webp" aria-label="Bild auswählen"></div></label><img id="image-preview" class="preview hidden" alt="Vorschau deines Bilds"><button type="submit" class="btn">Angebot veröffentlichen →</button><p id="offer-message" role="status" class="status hidden"></p></form>
+    </section>
+    <section class="legal" id="rechtliches"><div><h3>Impressum</h3><p id="imprint">Wird geladen …</p></div><div><h3>AGB</h3><p id="terms">Wird geladen …</p></div></section>
+  </main>
+  <footer><span>© 2026 BigBenShop · Lernprojekt</span><span>Mit Liebe fürs Angeln 🎣</span></footer>
+</body>
+</html>
