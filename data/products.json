@@ -261,5 +261,20 @@
     "imageAuthor": "Ewkaa",
     "imageLicense": "CC BY-SA 3.0",
     "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "id": "futter-6",
+    "name": "Schwertmuscheln",
+    "description": "Lebendfutter zum Ansetzen einer eigenen Mikrowurmkultur. Die kleinen Würmer dienen als Aufzuchtfutter für Jungfische.",
+    "category": "Fischfutter",
+    "type": "futter",
+    "source": "shop",
+    "priceCHF": 7.9,
+    "imageUrl": "https://media.istockphoto.com/id/626539486/de/foto/raw-schwertmuscheln-muscheln-auf-eis-zum-verkauf-auf-markt.jpg?s=2048x2048&w=is&k=20&c=V24xy0dJccXILcqh7oTPlMYDKCBv1cjqxppeclr1Pso=",
+    "imageNote": "Produktbeispiel",
+    "imageCreditUrl": "https://www.istockphoto.com/de/foto/raw-schwertmuscheln-muscheln-auf-eis-zum-verkauf-auf-markt-gm626539486-110686793?phrase=gro%C3%9Fe%20schwertmuschel&searchscope=image%2Cfilm",
+    "imageAuthor": "Ewkaa",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
   }
 ]
