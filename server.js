@@ -15,10 +15,11 @@ const PRODUCTS = path.join(DATA, 'products.json');
 const LEGAL = path.join(DATA, 'legal.json');
 const GROUPS = path.join(DATA, 'groups.json');
 const PORT = Number(process.env.PORT || 3000);
-// Sessions are stored as SHA-256 hashes in data/marketplace.json, so login survives restarts.
+// Sitzungen liegen als Token-Hashes in der Datenbank und überdauern einen Serverneustart.
 const tokenHash = token => crypto.createHash('sha256').update(token).digest('hex');
 const loginAttempts = new Map();
 let mutationQueue = Promise.resolve();
+// Startdaten werden nur beim ersten Anlegen einer fehlenden Katalogdatei verwendet.
 const catalogSeed = [
   {
     "id": "tier-1",
@@ -29,11 +30,14 @@ const catalogSeed = [
     "category": "Amphibien",
     "description": "Lebt in Süsswasserkanälen in Xochimilco, Mexiko. Der Salamander hat aussenliegende Kiemen und lebt auch als erwachsenes Tier im Wasser.",
     "priceCHF": 52,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Ambystoma_mexicanum_photo.jpg?width=900",
+    "imageUrl": "/images/axolotl.jpg",
     "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Ambystoma_mexicanum_photo.jpg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "Nasreddine Nas'h",
+    "imageLicense": "CC BY-SA 4.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
   },
   {
     "id": "tier-2",
@@ -44,11 +48,14 @@ const catalogSeed = [
     "category": "Knorpelfische",
     "description": "Lebt in tropischen und subtropischen Meeren, häufig in Küstennähe. Die dunklen Querstreifen junger Tiere verblassen mit dem Alter.",
     "priceCHF": 15000,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Galeocerdo_cuvier01.jpg?width=900",
-    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Galeocerdo_cuvier01.jpg",
+    "imageUrl": "/images/tigerhai.jpg",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Tiger_Shark_At_Tigerbeach_Bahamas_(149044369).jpeg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "Marion Kraschl",
+    "imageLicense": "CC BY 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by/3.0"
   },
   {
     "id": "tier-3",
@@ -59,11 +66,14 @@ const catalogSeed = [
     "category": "Knochenfische",
     "description": "Lebt in der Tiefsee des Südwestpazifiks. Das bekannte Exemplar «Mr Blobby» wurde in über 1’000 Metern Tiefe gefangen.",
     "priceCHF": 2500,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Two_Psychrolutes_marcidus.jpg?width=900",
+    "imageUrl": "/images/blobfisch.jpg",
     "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Two_Psychrolutes_marcidus.jpg",
-    "imageNote": "Foto einer verwandten Blobfisch-Art (Psychrolutes marcidus)",
+    "imageNote": "Vergleichsfoto: Psychrolutes marcidus",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "Rachel Caauwe",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
   },
   {
     "id": "tier-4",
@@ -74,11 +84,14 @@ const catalogSeed = [
     "category": "Knochenfische",
     "description": "Lebt in Süssgewässern in Südwestindien. Er ist ein kleiner Kugelfisch und frisst unter anderem kleine Schnecken.",
     "priceCHF": 16.49,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Carinotetraodon_travancoricus_by_OpenCage.jpg?width=900",
+    "imageUrl": "/images/erbsenkugelfisch.jpg",
     "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Carinotetraodon_travancoricus_by_OpenCage.jpg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "OpenCage",
+    "imageLicense": "CC BY-SA 2.5",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/2.5"
   },
   {
     "id": "tier-5",
@@ -89,11 +102,14 @@ const catalogSeed = [
     "category": "Knochenfische",
     "description": "Lebt im offenen Meer und besitzt kleine Leuchtorgane am Körper.",
     "priceCHF": 350,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Scopelus_phengodes_from_Lütken_1892.jpg?width=900",
-    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Scopelus_phengodes_from_Lütken_1892.jpg",
-    "imageNote": "Historische Artzeichnung, kein Foto",
+    "imageUrl": "/images/laternenfisch.jpg",
+    "imageCreditUrl": "https://www.gbif.org/occurrence/4464440158",
+    "imageNote": "Museumspräparat aus Kopenhagen",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "Natural History Museum of Denmark, NHMD P2393950",
+    "imageLicense": "CC BY 4.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by/4.0/"
   },
   {
     "id": "tier-6",
@@ -104,11 +120,14 @@ const catalogSeed = [
     "category": "Knochenfische",
     "description": "Lebt in tieferem Wasser im offenen Meer. Er hat einen langen, bandförmigen Körper und schwimmt mithilfe seiner langen Rückenflosse.",
     "priceCHF": 8000,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Regalecus_glesne_297924803.jpg?width=900",
+    "imageUrl": "/images/riemenfisch.jpg",
     "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Regalecus_glesne_297924803.jpg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "Gary Dickson",
+    "imageLicense": "CC BY 4.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by/4.0"
   },
   {
     "id": "tier-7",
@@ -119,11 +138,14 @@ const catalogSeed = [
     "category": "Knochenfische",
     "description": "Lebt im Atlantik und im Mittelmeer. Er ist ein grosser Raubfisch, der weite Strecken im offenen Meer zurücklegt.",
     "priceCHF": 4500,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Thunnus_thynnus_2.jpg?width=900",
-    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Thunnus_thynnus_2.jpg",
+    "imageUrl": "/images/thunfisch.jpg",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Thunnus_thynnus_Croatia.jpg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "picturavis",
+    "imageLicense": "CC0",
+    "imageLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
   },
   {
     "id": "tier-8",
@@ -134,11 +156,14 @@ const catalogSeed = [
     "category": "Kopffüsser",
     "description": "Lebt in Küstengewässern des östlichen Atlantiks und des Mittelmeers. Er hat acht Arme und kann seine Hautfarbe zur Tarnung ändern.",
     "priceCHF": 250,
-    "imageUrl": "https://commons.wikimedia.org/wiki/Special:FilePath/Octopus-vulgaris-1.jpg?width=900",
+    "imageUrl": "/images/oktopus.jpg",
     "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Octopus-vulgaris-1.jpg",
     "imageNote": "Artfoto",
     "type": "tier",
-    "source": "shop"
+    "source": "shop",
+    "imageAuthor": "MartinThoma",
+    "imageLicense": "CC0",
+    "imageLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
   },
   {
     "id": "futter-1",
@@ -146,9 +171,13 @@ const catalogSeed = [
     "category": "Fischfutter",
     "description": "Trockenfutter für viele Zierfische. Musterartikel für den Shop.",
     "priceCHF": 9.9,
-    "imageUrl": "/images/fish-placeholder.svg",
+    "imageUrl": "/images/flocken.jpg",
     "type": "futter",
-    "source": "shop"
+    "source": "shop",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Fischfutter-Flocken.JPG",
+    "imageAuthor": "Buchling",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
   },
   {
     "id": "futter-2",
@@ -156,9 +185,104 @@ const catalogSeed = [
     "category": "Fischfutter",
     "description": "Granulat für Aquarienfische. Musterartikel für den Shop.",
     "priceCHF": 17.5,
-    "imageUrl": "/images/fish-placeholder.svg",
+    "imageUrl": "/images/granulat.jpg",
     "type": "futter",
-    "source": "shop"
+    "source": "shop",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:3-Colour_Fish_Food.jpg",
+    "imageAuthor": "EL345er",
+    "imageLicense": "CC BY-SA 4.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "imageNote": "Beispielfoto eines Teichfutters"
+  },
+  {
+    "id": "angel-1",
+    "name": "Spinnrute · 2,40 m",
+    "description": "Zweiteilige Rute für das Spinnfischen mit Kunstködern. Wurfgewicht des Musterartikels: 10–30 g.",
+    "category": "Angelruten",
+    "type": "angeln",
+    "source": "shop",
+    "priceCHF": 69.9,
+    "imageUrl": "/images/spinnrute.jpg",
+    "imageNote": "Beispielfoto einer Spinnrute",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:A_spinning_reel_on_a_rod.jpg",
+    "imageAuthor": "JaredMcKenzie",
+    "imageLicense": "CC0",
+    "imageLicenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "id": "angel-2",
+    "name": "Fliegenrute · Klasse 5",
+    "description": "Vierteilige Einhandrute für die Fliegenfischerei am Bach und Fluss. Länge des Musterartikels: 2,74 m.",
+    "category": "Angelruten",
+    "type": "angeln",
+    "source": "shop",
+    "priceCHF": 119,
+    "imageUrl": "/images/fliegenrute.jpg",
+    "imageNote": "Beispielfoto einer Fliegenrute",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Loop-prut-navijak.jpg",
+    "imageAuthor": "Martingrun",
+    "imageLicense": "CC BY-SA 4.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "id": "angel-3",
+    "name": "Karpfenrute · 3,60 m",
+    "description": "Zweiteilige Rute für das Grundangeln auf Karpfen. Das Foto zeigt einen typischen Aufbau am Ufer.",
+    "category": "Angelruten",
+    "type": "angeln",
+    "source": "shop",
+    "priceCHF": 89.5,
+    "imageUrl": "/images/karpfenrute.jpg",
+    "imageNote": "Beispielfoto einer Karpfenrute",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Batterie_carpe.JPG",
+    "imageAuthor": "Epop",
+    "imageLicense": "Public domain",
+    "imageLicenseUrl": "https://commons.wikimedia.org/wiki/File:Batterie_carpe.JPG"
+  },
+  {
+    "id": "futter-3",
+    "name": "Sinkende Futtertabletten · 100 g",
+    "description": "Tabletten, die zum Beckenboden sinken. So lässt sich das Futter gezielt am Fressplatz anbieten.",
+    "category": "Fischfutter",
+    "type": "futter",
+    "source": "shop",
+    "priceCHF": 11.9,
+    "imageUrl": "/images/futtertabletten.jpg",
+    "imageNote": "Produktbeispiel",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Fischfutter-Tabs.JPG",
+    "imageAuthor": "Buchling",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "id": "futter-4",
+    "name": "Rote Mückenlarven · 25 g",
+    "description": "Gefriergetrocknete rote Mückenlarven als Ergänzungsfutter für insektenfressende Aquarienfische.",
+    "category": "Fischfutter",
+    "type": "futter",
+    "source": "shop",
+    "priceCHF": 8.5,
+    "imageUrl": "/images/mueckenlarven.jpg",
+    "imageNote": "Produktbeispiel",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Fischfutter-Mueckenlarven.jpg",
+    "imageAuthor": "Buchling",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "id": "futter-5",
+    "name": "Mikrowürmer · Starterkultur",
+    "description": "Lebendfutter zum Ansetzen einer eigenen Mikrowurmkultur. Die kleinen Würmer dienen als Aufzuchtfutter für Jungfische.",
+    "category": "Fischfutter",
+    "type": "futter",
+    "source": "shop",
+    "priceCHF": 7.9,
+    "imageUrl": "/images/mikrowuermer.jpg",
+    "imageNote": "Produktbeispiel",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:HodowlaPanagrellus_redivivus-nicienieMikro.jpg",
+    "imageAuthor": "Ewkaa",
+    "imageLicense": "CC BY-SA 3.0",
+    "imageLicenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
   }
 ];
 const groupsSeed = [{"id": 1, "name": "Amphibien"}, {"id": 2, "name": "Knorpelfische"}, {"id": 3, "name": "Knochenfische"}, {"id": 4, "name": "Kopffüsser"}];
@@ -166,7 +290,16 @@ const legalSeed = {
   imprint: 'MUSTERIMPRESSUM – Vor Veröffentlichung mit den tatsächlichen Betreiberangaben (Firma/Name, Adresse, Kontakt und weiteren Pflichtangaben) ersetzen.',
   terms: 'MUSTER-AGB – Dies ist nur ein Platzhalter. Vor echtem Betrieb rechtlich prüfen lassen.'
 };
-async function readJsonFile(filename) { return JSON.parse(await fs.readFile(filename, 'utf8')); }
+// Jede Anfrage liest die Datei erneut. So werden gespeicherte JSON-Änderungen sofort von der API geliefert.
+async function readJsonFile(filename) {
+  const contents = await fs.readFile(filename, 'utf8');
+  try { return JSON.parse(contents.replace(/^\uFEFF/, '')); }
+  catch (cause) {
+    const error = new Error(`Ungültiges JSON in data/${path.basename(filename)}. Bitte die Syntax prüfen.`, { cause });
+    error.status = 500;
+    throw error;
+  }
+}
 async function ensureFile(filename, contents) {
   try { await fs.access(filename); }
   catch (e) {
@@ -223,7 +356,7 @@ async function login(res, user) {
   setCookie(res, token, 7 * 86400);
   json(res, 200, { user: publicUser(user) });
 }
-// Mutations are serialized and read the JSON fresh, so we don't overwrite data cached at startup.
+// Schreibvorgänge laufen nacheinander. Erst nach dem vollständigen Schreiben ersetzt die temporäre Datei die Datenbank.
 function mutate(callback) {
   const transaction = mutationQueue.catch(() => {}).then(async () => {
     const db = await readJsonFile(DB);
@@ -239,6 +372,7 @@ function mutate(callback) {
   mutationQueue = transaction;
   return transaction;
 }
+// Vor dem Speichern prüfen wir Dateityp, Grösse und die ersten Bytes der hochgeladenen Bilddatei.
 function decodeImage(dataUrl) {
   if (!dataUrl) return null;
   if (typeof dataUrl !== 'string') { const e = new Error('Ungültiges Bild.'); e.status = 400; throw e; }
@@ -252,20 +386,33 @@ function decodeImage(dataUrl) {
   if (!({ png, jpeg: jpg, webp })[match[1]]) { const e = new Error('Bildformat stimmt nicht mit dem Inhalt überein.'); e.status = 400; throw e; }
   return { raw, extension: match[1] === 'jpeg' ? 'jpg' : match[1] };
 }
-function offerPublic(o) {
-  return { id: o.id, productId: o.productId || `user-${o.id}`, title: o.title, description: o.description, category: o.category || 'Angebot', priceCHF: o.priceCHF, imageUrl: o.imageUrl || null, sellerName: o.sellerName, createdAt: o.createdAt, sellerId: o.sellerId }; 
+function offerImages(offer) {
+  return Array.isArray(offer.imageUrls) ? offer.imageUrls : (offer.imageUrl ? [offer.imageUrl] : []);
 }
+function offerPublic(o) {
+  return { id: o.id, productId: o.productId || `user-${o.id}`, title: o.title, description: o.description, category: o.category || 'Angebot', priceCHF: o.priceCHF, imageUrl: o.imageUrl || null, imageUrls: offerImages(o), sellerName: o.sellerName, createdAt: o.createdAt, sellerId: o.sellerId };
+}
+// Die HTTP-Methode und der Pfad entscheiden, ob wir Shopdaten liefern, ein Konto anmelden oder ein Angebot speichern.
 async function api(req, res, pathname) {
   const method = req.method;
-  if (method === 'GET' && pathname === '/api/v1/groups') { return json(res, 200, { groups: await readJsonFile(GROUPS) }); }
+  if (method === 'GET' && pathname === '/api/v1/groups') {
+    const groups = await readJsonFile(GROUPS);
+    if (!Array.isArray(groups) || groups.some(g => g == null || typeof g.name !== 'string' || g.id == null)) {
+      return fail(res, 500, 'data/groups.json muss eine Liste von Gruppen mit id und name enthalten.');
+    }
+    return json(res, 200, { groups });
+  }
   if (method === 'GET' && pathname === '/api/v1/products') {
     const catalog = await readJsonFile(PRODUCTS); const db = await readJsonFile(DB);
-    if (!Array.isArray(catalog)) return fail(res, 500, 'products.json muss eine JSON-Liste sein.');
-    const additions = (db.offers || []).map(o => ({ id: `user-${o.id}`, name: o.title, category: o.category || 'Angebot', description: o.description, imageUrl: o.imageUrl || null, priceCHF: o.priceCHF, type: 'community', source: 'community', offerId: o.id }));
+    if (!Array.isArray(catalog) || catalog.some(p => !p || typeof p.name !== 'string')) return fail(res, 500, 'data/products.json muss eine Liste von Artikeln mit name enthalten.');
+    const additions = (db.offers || []).map(o => ({ id: `user-${o.id}`, name: o.title, category: o.category || 'Angebot', description: o.description, imageUrl: o.imageUrl || null, imageUrls: offerImages(o), priceCHF: o.priceCHF, type: 'community', source: 'community', offerId: o.id }));
     return json(res, 200, { products: [...catalog, ...additions] });
   }
   if (method === 'GET' && (pathname === '/api/v1/legal/imprint' || pathname === '/api/v1/legal/terms')) {
-    const legal = await readJsonFile(LEGAL); return json(res, 200, { content: pathname.endsWith('imprint') ? legal.imprint : legal.terms });
+    const legal = await readJsonFile(LEGAL);
+    const key = pathname.endsWith('imprint') ? 'imprint' : 'terms';
+    if (typeof legal?.[key] !== 'string') return fail(res, 500, `In data/legal.json fehlt das Textfeld „${key}“.`);
+    return json(res, 200, { content: legal[key] });
   }
   if (method === 'GET' && pathname === '/api/v1/offers') {
     const db = await readJsonFile(DB); return json(res, 200, { offers: (db.offers || []).map(offerPublic).reverse() });
@@ -306,19 +453,35 @@ async function api(req, res, pathname) {
       db.offers = db.offers.filter(o => o.id !== offer.id);
       return offer;
     }); } catch(e) { if(e.status) return fail(res,e.status,e.message); throw e; }
-    if (typeof result.imageUrl === 'string' && /^\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp)$/.test(result.imageUrl)) await fs.unlink(path.join(UPLOADS, path.basename(result.imageUrl))).catch(() => {});
+    for (const url of offerImages(result)) {
+      if (/^\/uploads\/[a-f0-9-]{36}(?:-[1-3])?\.(jpg|png|webp)$/.test(url)) await fs.unlink(path.join(UPLOADS, path.basename(url))).catch(() => {});
+    }
     return json(res, 200, { ok: true });
   }
   if (method === 'POST' && pathname === '/api/v1/offers') {
     const user = await userFromRequest(req); if (!user) return fail(res, 401, 'Bitte zuerst anmelden.');
-    const input = await bodyJson(req, 3 * 1024 * 1024); const title = clean(input.title, 100); const description = clean(input.description, 1500); const category = clean(input.category, 50) || 'Süsswasser'; const price = Number(input.priceCHF);
+    const input = await bodyJson(req, 12 * 1024 * 1024); const title = clean(input.title, 100); const description = clean(input.description, 1500); const category = clean(input.category, 50) || 'Süsswasser'; const price = Number(input.priceCHF);
     if (title.length < 3 || description.length < 5 || !Number.isFinite(price) || price <= 0 || price > 100000 || Math.abs(Math.round(price * 100) - price * 100) > 1e-6) return fail(res, 400, 'Titel (mind. 3 Zeichen), Beschreibung und gültigen Preis eingeben.');
-    const image = decodeImage(input.imageDataUrl);
-    const id = crypto.randomUUID(); const imageName = image ? `${id}.${image.extension}` : null;
-    if (image) await fs.writeFile(path.join(UPLOADS, imageName), image.raw, { flag: 'wx' });
-    const offer = { id, productId: `user-${id}`, title, description, category, priceCHF: price, imageUrl: imageName ? `/uploads/${imageName}` : null, sellerId: user.id, sellerName: user.name, createdAt: new Date().toISOString() };
-    try { await mutate(db => { db.offers.push(offer); }); }
-    catch (e) { if (imageName) await fs.unlink(path.join(UPLOADS, imageName)).catch(() => {}); throw e; }
+    const files = input.imageDataUrls ?? (input.imageDataUrl ? [input.imageDataUrl] : []);
+    if (!Array.isArray(files) || files.length > 4 || files.some(file => !file)) return fail(res, 400, 'Bitte bis zu vier Bilder auswählen.');
+    const images = files.map(decodeImage);
+    const id = crypto.randomUUID();
+    const names = images.map((image, index) => id + (index ? '-' + index : '') + '.' + image.extension);
+    const imageUrls = names.map(name => '/uploads/' + name);
+    const offer = { id, productId: `user-${id}`, title, description, category, priceCHF: price, imageUrl: imageUrls[0] || null, imageUrls, sellerId: user.id, sellerName: user.name, createdAt: new Date().toISOString() };
+    // Erst Bilder speichern, dann das Angebot eintragen. Schlägt das Eintragen fehl, räumen wir die neuen Bilder auf.
+    const written = [];
+    try {
+      for (const [index, image] of images.entries()) {
+        const filename = path.join(UPLOADS, names[index]);
+        await fs.writeFile(filename, image.raw, { flag: 'wx' });
+        written.push(filename);
+      }
+      await mutate(db => { db.offers.push(offer); });
+    } catch (e) {
+      await Promise.all(written.map(filename => fs.unlink(filename).catch(() => {})));
+      throw e;
+    }
     return json(res, 201, { offer: offerPublic(offer) });
   }
   return fail(res, 404, 'API-Endpunkt nicht gefunden.');
@@ -329,11 +492,11 @@ async function staticFile(req, res, pathname) {
   let filename;
   if (pathname.startsWith('/uploads/')) {
     const name = pathname.slice('/uploads/'.length);
-    if (!/^[a-f0-9-]{36}\.(png|jpg|webp)$/.test(name)) return fail(res, 404, 'Nicht gefunden.');
+    if (!/^[a-f0-9-]{36}(?:-[1-3])?\.(png|jpg|webp)$/.test(name)) return fail(res, 404, 'Nicht gefunden.');
     filename = path.join(UPLOADS, name);
   } else {
     const relative = pathname === '/' ? 'index.html' : pathname.slice(1);
-    if (!/^(index\.html|styles\.css|app\.js|images\/[a-z-]+\.svg)$/.test(relative)) return fail(res, 404, 'Nicht gefunden.');
+    if (!/^(index\.html|styles\.css|app\.js|images\/[A-Za-z0-9_-]+\.(?:svg|png|jpe?g|webp))$/.test(relative)) return fail(res, 404, 'Nicht gefunden.');
     filename = path.join(PUBLIC, relative);
   }
   try {
@@ -353,5 +516,5 @@ initialize().then(() => {
       console.error(e);
       return fail(res, e.status || 500, e.status ? e.message : 'Serverfehler. Prüfe die JSON-Dateien auf gültige Syntax.');
     }
-  }).listen(PORT, () => console.log(`BigBenShop läuft auf http://localhost:${PORT}`));
+  }).listen(PORT, function () { console.log(`BigBenShop läuft auf http://localhost:${this.address().port}\nShopdaten: ${DATA}`); });
 }).catch(e => { console.error(e); process.exitCode = 1; });
