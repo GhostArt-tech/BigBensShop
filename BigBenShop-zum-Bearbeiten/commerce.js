@@ -62,7 +62,11 @@ document.addEventListener('submit',async e=>{let f=e.target;if(!f.dataset.form){
  case 'search':closePanel();go('search?q='+encodeURIComponent(d.q.trim()));break;
  case 'newsletter':{const email=d.email.toLowerCase().trim();put('newsletter',[...new Set([...read('newsletter',[]),email])]);f.reset();toast(tr('Demo-Anmeldung in diesem Browser gespeichert.','Inscription démo enregistrée dans ce navigateur.','Demo subscription saved in this browser.'));break}
  case 'support':put('support',[...read('support',[]),{email:d.email,message:d.message}]);f.reset();toast(tr('Demo-Anfrage gespeichert.','Demande démo enregistrée.','Demo enquiry saved.'));break;
- case 'review':put('reviews',[...read('reviews',[]),{id,score:+d.score,comment:d.comment.trim()}]);render();toast(ok);break;
+ case 'review':{
+   const response=await fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,score:Number(d.score),comment:d.comment.trim()})});
+   if(!response.ok)throw Error('Bewertung konnte nicht gespeichert werden (HTTP '+response.status+')');
+   await loadSharedProductReviews(true);render();toast(ok);break;
+  }
  case 'address':put('profile',getAddress(d));toast(ok);break;
  case 'track':{let o=orders().find(o=>o.id===d.id.trim().toUpperCase());$('#trackResult').innerHTML=o?track(o):`<p>${tr('Keine Bestellung mit dieser Nummer gefunden.','Aucune commande trouvée.','No order found with that number.')}</p>`;break}
  case 'add':{let cs=cart(),p=item(id);if(!p||!p.variants.includes(d.variant))break;if(cs.filter(c=>c.id===id).reduce((s,c)=>s+c.qty,0)>=p.stock){toast(tr('Lagerbestand erreicht.','Stock maximal atteint.','Stock limit reached.'));break}let line=cs.find(l=>l.id===id&&l.variant===d.variant);if(line)line.qty++;else cs.push({id,variant:d.variant,qty:1});put('cart',cs);header();panel(`<div class="kicker">${basket()}</div><h2>${tr('Zum Warenkorb hinzugefügt','Ajouté au panier','Added to your basket')}</h2><p>${esc(p.name)}${p.speciesId?'':' · '+esc(d.variant)} · ${money(p.price)}</p>${link('cart',basket(),'btn dark')}`);break}

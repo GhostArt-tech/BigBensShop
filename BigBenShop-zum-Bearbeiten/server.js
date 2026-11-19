@@ -33,6 +33,22 @@ async function handleCommunity(request,env,ctx){
   const file=await env.BUCKET.get(key);if(!file)fail('missing',404);
   return new Response(file.body,{headers:{'Content-Type':'image/jpeg','Cache-Control':'private, max-age=60','X-Content-Type-Options':'nosniff'}});
  }
+ if(resource==='reviews'){
+  if(id || action)fail('missing',404);
+  if(method==='GET'){
+   const rows=await db.prepare('SELECT product_id AS id, stars AS score, comment, created FROM product_reviews ORDER BY created DESC').bind().all();
+   return response({items:rows.results});
+  }
+  if(method!=='POST')fail('method',405);
+  if(!user)fail('signin',401);
+  if(request.headers.get('Origin')!==url.origin)fail('forbidden',403);
+  const payload=await request.json();
+  const productId=String(payload.id||'');
+  const stars=payload.score,comment=String(payload.comment||'').trim();
+  if(!/^[a-zA-Z0-9-]{1,80}$/.test(productId)||!Number.isInteger(stars)||stars<1||stars>5||!comment||comment.length>500)fail('invalid',400);
+  await db.prepare('INSERT INTO product_reviews (id,product_id,user_id,stars,comment,created) VALUES (?,?,?,?,?,?)').bind(crypto.randomUUID(),productId,user,stars,comment,Date.now()).run();
+  return response({ok:true},201);
+ }
  if(resource!=='offers')fail('missing',404);
  if(!id&&method==='GET'){
   const result=await db.prepare(`SELECT o.*, (SELECT AVG(stars) FROM ratings r WHERE r.offer_id=o.id) AS average,
@@ -94,6 +110,7 @@ fs.mkdirSync(folder, { recursive: true });
 const db = new DatabaseSync(path.join(folder, 'community.sqlite'));
 db.exec('PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL;');
 db.exec(shopSchema);
+db.exec(`CREATE TABLE IF NOT EXISTS product_reviews (id TEXT PRIMARY KEY, product_id TEXT NOT NULL, user_id TEXT NOT NULL, stars INTEGER NOT NULL CHECK(stars BETWEEN 1 AND 5), comment TEXT NOT NULL, created INTEGER NOT NULL); CREATE INDEX IF NOT EXISTS product_reviews_product ON product_reviews(product_id,created DESC);`);
 db.exec(`CREATE TABLE IF NOT EXISTS sessions (digest TEXT PRIMARY KEY, member TEXT NOT NULL, admin INTEGER NOT NULL DEFAULT 0);
   CREATE TABLE IF NOT EXISTS pictures (key TEXT PRIMARY KEY, data BLOB NOT NULL);`);
 
@@ -139,7 +156,7 @@ async function readBody(req, limit) {
   return Buffer.concat(chunks);
 }
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8',
-  '.svg':'image/svg+xml','.jpg':'image/jpeg','.ttf':'font/ttf','.txt':'text/plain; charset=utf-8'};
+  '.svg':'image/svg+xml','.jpg':'image/jpeg','.avif':'image/avif','.ttf':'font/ttf','.txt':'text/plain; charset=utf-8'};
 const assets = new Set(('index.html favicon.svg shop.css atlas.css bigben.css banner.css data.js species.js equipment.js equipment-credits.js credits.js measurements.js specs.js community.js shop.js commerce.js').split(' '));
 function finish(res, status, type, content) {
   res.writeHead(status, {'Content-Type': type});
@@ -175,7 +192,7 @@ const app = http.createServer(async (req, res) => {
     }
     if (!get) return finish(res, 405, 'text/plain', '');
     const file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
-    const photo = /^(wildlife|equipment-photos)\/[\w-]+\.jpg$/.test(file);
+    const photo = /^(wildlife|equipment-photos)\/[\w-]+\.(jpg|avif)$/.test(file);
     const font = /^fonts\/[\w.-]+\.(ttf|txt)$/.test(file);
     if (!assets.has(file) && !photo && !font) return finish(res, 404, 'text/plain', '');
     const data = await fs.promises.readFile(path.join(root, file));
