@@ -1,5 +1,5 @@
 'use strict';
-// BigBenShop Lernprototyp – Node.js 20+, keine npm-Abhängigkeiten.
+// Wasserwerk Fischershop – Server v2, Node.js 20+, keine npm-Abhängigkeiten.
 const http = require('node:http');
 const fs = require('node:fs/promises');
 const path = require('node:path');
@@ -14,7 +14,7 @@ const DB = path.join(DATA, 'marketplace.json');
 const PRODUCTS = path.join(DATA, 'products.json');
 const LEGAL = path.join(DATA, 'legal.json');
 const GROUPS = path.join(DATA, 'groups.json');
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 3001);
 // Sitzungen liegen als Token-Hashes in der Datenbank und überdauern einen Serverneustart.
 const tokenHash = token => crypto.createHash('sha256').update(token).digest('hex');
 const loginAttempts = new Map();
@@ -486,7 +486,10 @@ async function api(req, res, pathname) {
   }
   return fail(res, 404, 'API-Endpunkt nicht gefunden.');
 }
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
+// Die Oberfläche liegt direkt neben server.js. Die Bilder 1.jpg bis 8.jpg
+// werden zusätzlich unter /wildlife/1.jpg bis /wildlife/8.jpg ausgeliefert.
+const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
+const siteFiles = new Set(['index.html', 'shop.css', 'atlas.css', 'data.js', 'species.js', 'credits.js', 'shop.js', 'commerce.js', 'favicon.svg', 'museum.json', 'reef.json']);
 async function staticFile(req, res, pathname) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Methode nicht erlaubt.');
   let filename;
@@ -496,25 +499,30 @@ async function staticFile(req, res, pathname) {
     filename = path.join(UPLOADS, name);
   } else {
     const relative = pathname === '/' ? 'index.html' : pathname.slice(1);
-    if (!/^(index\.html|styles\.css|app\.js|images\/[A-Za-z0-9_-]+\.(?:svg|png|jpe?g|webp))$/.test(relative)) return fail(res, 404, 'Nicht gefunden.');
-    filename = path.join(PUBLIC, relative);
+    const imageMatch = /^(?:wildlife\/)?([1-8])\.jpg$/.exec(relative);
+    if (imageMatch) filename = path.join(ROOT, imageMatch[1] + '.jpg');
+    else if (siteFiles.has(relative)) filename = path.join(ROOT, relative);
+    else return fail(res, 404, 'Datei nicht gefunden.');
   }
   try {
-    const content = await fs.readFile(filename); const type = mime[path.extname(filename)];
-    const headers = { 'Content-Type': type || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
-    if (type?.startsWith('text/html')) headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://commons.wikimedia.org https://upload.wikimedia.org https://*.wikimedia.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
-    res.writeHead(200, headers); res.end(req.method === 'HEAD' ? undefined : content);
+    const content = await fs.readFile(filename);
+    const type = mime[path.extname(filename)] || 'application/octet-stream';
+    const headers = { 'Content-Type': type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' };
+    if (type.startsWith('text/html')) headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'";
+    res.writeHead(200, headers);
+    res.end(req.method === 'HEAD' ? undefined : content);
   } catch (e) { if (e.code === 'ENOENT') return fail(res, 404, 'Datei nicht gefunden.'); throw e; }
 }
 initialize().then(() => {
   http.createServer(async (req, res) => {
     try {
       const pathname = new URL(req.url, 'http://localhost').pathname;
+      if (pathname === '/health' && req.method === 'GET') return json(res, 200, { ok: true, service: 'wasserwerk', version: 2 });
       if (pathname.startsWith('/api/')) return await api(req, res, pathname);
       return await staticFile(req, res, pathname);
     } catch (e) {
       console.error(e);
       return fail(res, e.status || 500, e.status ? e.message : 'Serverfehler. Prüfe die JSON-Dateien auf gültige Syntax.');
     }
-  }).listen(PORT, function () { console.log(`BigBenShop läuft auf http://localhost:${this.address().port}\nShopdaten: ${DATA}`); });
+  }).listen(PORT, function () { console.log(`Wasserwerk Fischershop läuft auf http://localhost:${this.address().port}\nShopdaten: ${DATA}`); });
 }).catch(e => { console.error(e); process.exitCode = 1; });
