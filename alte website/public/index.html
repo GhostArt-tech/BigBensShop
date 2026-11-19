@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#082e37">
+  <meta name="description" content="Fischarten entdecken und eigene Angebote auf dem Fisch-Marktplatz BigBenShop veröffentlichen.">
+  <title>BigBenShop · Fischwelt & Marktplatz</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body id="start">
+  <a class="skip" href="#fische">Zum Katalog springen</a>
+  <header class="topbar">
+    <div class="wrap navigation">
+      <a class="brand" href="#start" aria-label="BigBenShop Startseite"><span class="brand-fish" aria-hidden="true"></span>BigBen<span class="brand-light">Shop</span></a>
+      <nav aria-label="Hauptnavigation"><a href="#fische">Fischwelt</a><a href="#angebote">Marktplatz</a><a href="#anbieten">Angebot erstellen</a></nav>
+      <a class="account-link" href="#konto"><span class="person-icon" aria-hidden="true"></span>Mein Konto</a>
+    </div>
+  </header>
+  <!-- Das Titelbild liegt im Projekt. Es wird als erstes geladen, damit der Seitenkopf sofort sichtbar ist. -->
+  <section class="hero" aria-labelledby="hero-title">
+    <img class="hero-photo" src="/images/riff.jpg" alt="Ein Schwarm gelber Blaustreifen-Schnapper im blauen Wasser vor Komodo." fetchpriority="high">
+    <!-- Licht und Luftblasen liegen über dem Foto, während die Schrift ruhig bleibt. -->
+    <div class="sea-atmosphere" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <!-- Drei versetzte Wasserlinien nutzen dieselbe Kontur. CSS formt ihre Kurven weich um. -->
+    <label class="wave-control" title="Titelbildanimation pausieren oder fortsetzen">
+      <input id="wave-pause" type="checkbox" aria-label="Titelbildanimation pausieren">
+      <span class="wave-icon" aria-hidden="true"></span>
+    </label>
+    <svg class="waterline" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="wave-far" transform="translate(0 -14)" d="M0 42 C125 12 225 10 360 36 S590 64 735 38 S980 11 1105 30 S1320 60 1440 29 L1440 90 L0 90 Z"/>
+      <path class="wave-near" transform="translate(0 -7)" d="M0 42 C125 12 225 10 360 36 S590 64 735 38 S980 11 1105 30 S1320 60 1440 29 L1440 90 L0 90 Z"/>
+      <path class="wave-shore" d="M0 42 C125 12 225 10 360 36 S590 64 735 38 S980 11 1105 30 S1320 60 1440 29 L1440 90 L0 90 Z"/>
+    </svg>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="signal"></span> Der Fisch-Marktplatz</p>
+        <h1 id="hero-title">Die Welt<br><em>unter Wasser.</em></h1>
+        <p class="intro">Entdecke Fischarten, finde die passende Angelrute und stöbere durch Futter und Angebote aus der Community.</p>
+        <div class="actions"><a class="button accent" href="#fische">Fischwelt entdecken <span aria-hidden="true">↓</span></a><a class="hero-link" href="#angebote">Zum Marktplatz <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <a href="#bildnachweise" class="photo-caption"><span class="lens" aria-hidden="true"></span>Manta Alley · Komodo, Indonesien</a>
+    </div>
+  </section>
+  <main class="wrap">
+    <!-- app.js befüllt die Filter und erzeugt aus jedem API-Artikel eine Fotokarte. -->
+    <section id="fische" class="section catalog">
+      <div class="section-heading"><div><p class="overline">Der Katalog</p><h2>Unsere Fischwelt<span class="period">.</span></h2></div>
+        <label class="searchbox"><span class="magnify" aria-hidden="true"></span><input id="search" type="search" placeholder="Artikel suchen" aria-label="Artikel suchen"></label>
+      </div>
+      <div class="toolbar">
+        <div class="tabs" aria-label="Artikeltyp filtern" role="group">
+          <button type="button" data-type="all" aria-pressed="true">Alle Artikel</button><button type="button" data-type="tier" aria-pressed="false">Tierarten</button><button type="button" data-type="angeln" aria-pressed="false">Angeln</button><button type="button" data-type="futter" aria-pressed="false">Fischfutter</button><button type="button" data-type="community" aria-pressed="false">Community</button>
+        </div>
+        <select id="category-filter" aria-label="Kategorie filtern"><option value="">Alle Kategorien</option></select>
+      </div>
+      <p class="result-line" role="status"><span id="fish-count">…</span> · Tierpreise sind Beispielwerte.</p>
+      <p id="group-error" class="data-error" role="status"></p><p id="catalog-error" class="data-error" role="status"></p>
+      <div id="products" class="cards"></div>
+    </section>
+    <section class="section" id="angebote">
+      <div class="section-heading"><div><p class="overline">Aus der Community</p><h2>Der Marktplatz<span class="period">.</span></h2></div>
+        <button class="button outline" id="refresh" type="button">↻ Aktualisieren</button>
+      </div>
+      <p id="offers-error" class="data-error" role="status"></p><div id="offers" class="cards" aria-live="polite"></div>
+    </section>
+    <section class="section split" id="anbieten">
+      <div class="section-copy"><p class="overline">Verkaufen</p><h2>Dein Angebot<span class="period">.</span></h2><p>Zeige, was du anbietest. Dein Titelbild erscheint im Katalog und auf dem Marktplatz.</p><a href="#konto" class="text-link">Zum Konto ↗</a></div>
+      <form id="offer-form" class="panel form-grid">
+        <label class="full">Titel<input id="offer-title" placeholder="z. B. Flockenfutter für Zierfische" required minlength="3" maxlength="100"></label>
+        <label>Kategorie<select id="offer-category"><option>Süsswasser</option><option>Salzwasser</option><option>Angelruten</option><option>Angelzubehör</option><option>Sonstiges</option><option>Fischfutter</option></select></label>
+        <label>Preis in CHF<input id="offer-price" type="number" min="0.01" max="100000" step="0.01" required placeholder="29.90"></label>
+        <label class="full">Beschreibung<textarea id="offer-description" placeholder="Was sollten Interessierte wissen?" minlength="5" maxlength="1500" required></textarea></label>
+        <label class="full">Fotos hinzufügen <small>Bis zu vier JPG-, PNG- oder WEBP-Dateien mit je 2 MB.</small><input id="offer-image" type="file" multiple accept="image/png,image/jpeg,image/webp"></label>
+        <div id="image-preview" class="previews full" aria-label="Bildvorschau"></div>
+        <button type="submit" class="button dark">Angebot veröffentlichen ↗</button><p id="offer-message" role="status" class="status hidden full"></p>
+      </form>
+    </section>
+    <section class="section split" id="konto">
+      <div class="section-copy"><p class="overline">Mitgliedsbereich</p><h2>Mein Konto<span class="period">.</span></h2><p id="account-line">Nicht angemeldet</p><button id="logout" type="button" class="button outline hidden">Abmelden</button><p id="account-message" role="status" class="status hidden"></p></div>
+      <div class="panel auth" id="auth-panel">
+        <form id="login-form"><h3>Anmelden</h3><label>E-Mail<input id="login-email" type="email" required autocomplete="email"></label><label>Passwort<input id="login-password" type="password" required autocomplete="current-password"></label><button class="button dark" type="submit">Einloggen</button></form>
+        <form id="register-form"><h3>Konto erstellen</h3><label>Name<input id="reg-name" required minlength="2" autocomplete="name"></label><label>E-Mail<input id="reg-email" type="email" required autocomplete="email"></label><label>Passwort <small>Mindestens 12 Zeichen</small><input id="reg-password" type="password" minlength="12" required autocomplete="new-password"></label><button class="button outline" type="submit">Registrieren</button></form>
+      </div>
+    </section>
+    <section class="legal" id="rechtliches" aria-label="Rechtliches und Bildnachweise">
+      <div><h3>Impressum</h3><p id="imprint-error" class="data-error" role="status"></p><p id="imprint">Wird geladen …</p></div>
+      <div><h3>AGB</h3><p id="terms-error" class="data-error" role="status"></p><p id="terms">Wird geladen …</p></div>
+      <details id="bildnachweise"><summary>Bildnachweise</summary><p>Titelbild „A school of blue-striped snappers at Manta Alley“ von Alexander Vasenin. Darstellung im Bildausschnitt. <a href="https://commons.wikimedia.org/wiki/File:A_school_of_blue-striped_snappers_at_Manta_Alley.JPG">Original</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>. Die Quellen der Artikelfotos stehen in den jeweiligen Details.</p></details>
+    </section>
+  </main>
+  <footer><div class="wrap"><b>BigBenShop</b><span>Fischwelt & Marktplatz</span><a href="#start">Nach oben ↑</a></div></footer>
+  <!-- Ein gemeinsamer Dialog zeigt die Details der jeweils ausgewählten Karte. -->
+  <dialog id="item-dialog" aria-labelledby="detail-title"><div class="dialog-bar"><span>Artikeldetails</span><form method="dialog"><button class="close-dialog" aria-label="Details schliessen">×</button></form></div><div id="detail-content"></div></dialog>
+</body>
+</html>
