@@ -1,0 +1,3 @@
+# SQLite temp files: change on every run, cannot be merged
+*.sqlite-shm
+*.sqlite-wal
