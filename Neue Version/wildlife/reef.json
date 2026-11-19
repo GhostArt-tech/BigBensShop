@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "author": "LoKiLeCh (Weissabgleich: Samsara)",
+    "title": "Axolotl ganz",
+    "url": "https://commons.wikimedia.org/wiki/File:Axolotl_ganz.jpg",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "id": 2,
+    "author": "Albert Kok",
+    "title": "Tigershark2",
+    "url": "https://commons.wikimedia.org/wiki/File:Tigershark2.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  {
+    "id": 4,
+    "author": "Parazelsus (Ausschnitt: Primium)",
+    "title": "Carinotetraodon travancoricus by Parazelsus (cropped)",
+    "url": "https://commons.wikimedia.org/wiki/File:Carinotetraodon_travancoricus_by_Parazelsus_(cropped).jpg",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0/"
+  },
+  {
+    "id": 8,
+    "author": "Jean-Marc Kuffer (jayhem)",
+    "title": "Octopus vulgaris – Common octopus",
+    "url": "https://commons.wikimedia.org/wiki/File:Octopus_vulgaris_-_Common_octopus_(7816130896).jpg",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0/"
+  }
+]
