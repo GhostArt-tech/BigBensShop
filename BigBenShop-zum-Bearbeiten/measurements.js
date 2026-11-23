@@ -81,5 +81,46 @@ const animalMeasurements = {
     "weightEN": "Commonly 1–3 kg",
     "source": "FAO · Octopus vulgaris",
     "url": "https://www.fao.org/4/x0169f/x0169f80.pdf"
-  }
+  },
+  "9": {
+  "length": "2-3 m",
+  "weight": "160-200 kg",
+  "lengthFR": "2-3 m",
+  "weightFR": "160-200 kg",
+  "lengthEN": "2-3 m",
+  "weightEN": "160–200 kg",
+  "source": "Smithsonian’s National Zoo",
+  "url": "https://www.nationalzoo.si.edu/animals/arapaima"
+},
+
+"10": {
+  "length": "10–15 cm",
+  "weight": "20–50 g",
+  "lengthFR": "10–15 cm",
+  "weightFR": "20–50 g",
+  "lengthEN": "10–15 cm",
+  "weightEN": "20–50 g",
+  "source": "Schätzwerte für ausgewachsene Longfin Albino Bristlenose Plecos",
+  "url": ""
+},
+"11": {
+  "length": "20–30 cm",
+  "weight": "200–500 g",
+  "lengthFR": "20–30 cm",
+  "weightFR": "200–500 g",
+  "lengthEN": "20–30 cm",
+  "weightEN": "200–500 g",
+  "source": "Schätzwerte für ausgewachsene Prachtschmerlen",
+  "url": ""
+},
+"12": {
+  "length": "10–13 cm",
+  "weight": "20–50 g",
+  "lengthFR": "10–13 cm",
+  "weightFR": "20–50 g",
+  "lengthEN": "10–13 cm",
+  "weightEN": "20–50 g",
+  "source": "Schätzwerte für ausgewachsene Cobalt Blue Zebra Cichliden",
+  "url": ""
+}
 };

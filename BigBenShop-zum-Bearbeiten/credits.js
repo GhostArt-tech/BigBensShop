@@ -62,5 +62,39 @@ const imageCredits = [
     "url": "https://commons.wikimedia.org/wiki/File:Octopus_vulgaris_-_Common_octopus_(7816130896).jpg",
     "license": "CC BY 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0/"
-  }
+  },
+  {
+    "id": 9,
+    "author": "Ad Meskens",
+    "title": "Barcelona Cosmocaixa Arapaima gigas 01",
+    "url": "https://commons.wikimedia.org/wiki/File:Barcelona_Cosmocaixa_Arapaima_gigas_01.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+
+{
+  "id": 10,
+  "author": "Fish-Hed",
+  "title": "Albino Bristlenose Pleco",
+  "url": "https://commons.wikimedia.org/wiki/File:Albino_Bristlenose_Pleco.JPG",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+},
+{
+  "id": 11,
+  "author": "Andrej Jakubík",
+  "title": "Chromobotia macracanthus (Bleeker, 1852) Clown loach",
+  "url": "https://commons.wikimedia.org/wiki/File:Chromobotia_macracanthus_(Bleeker,_1852)_Clown_loach.jpg",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+},
+{
+  "id": 12,
+  "author": "Alexandra Tyers",
+  "title": "Maylandia callainos",
+  "url": "https://commons.wikimedia.org/wiki/File:Maylandia_callainos.jpg",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/"
+}
+
 ];

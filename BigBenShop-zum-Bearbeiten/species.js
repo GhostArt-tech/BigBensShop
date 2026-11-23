@@ -38,14 +38,55 @@ const speciesRows=[
  {id:8,groupId:4,names:['Gewöhnlicher Oktopus','Poulpe commun','Common octopus'],latin:'Octopus vulgaris',water:1,habitat:['Ostatlantik und Mittelmeer','Atlantique oriental et Méditerranée','Eastern Atlantic and Mediterranean'],description:[
  'Lebt in Küstengewässern des östlichen Atlantiks und des Mittelmeers. Er hat acht Arme und kann seine Hautfarbe zur Tarnung ändern.',
  'Il vit dans les eaux côtières de l’Atlantique oriental et de la Méditerranée. Il possède huit bras et peut changer la couleur de sa peau pour se camoufler.',
- 'It lives in coastal waters of the eastern Atlantic and Mediterranean. It has eight arms and can change its skin colour for camouflage.']}
+ 'It lives in coastal waters of the eastern Atlantic and Mediterranean. It has eight arms and can change its skin colour for camouflage.']},
+ {id:9,groupId:3,names:['Arapaima','Arapaïma','Arapaima'],latin:'Arapaima gigas',water:0,habitat:[
+ 'Flüsse und Seen im Amazonasbecken',
+ 'Rivières et lacs du bassin amazonien',
+ 'Rivers and lakes of the Amazon basin'
+],description:[
+ 'Der Arapaima lebt im Süsswasser des Amazonasbeckens. Er kann über zwei Meter lang werden und kommt regelmässig an die Oberfläche, um Luft zu holen.',
+ 'L’arapaïma vit dans les eaux douces du bassin amazonien. Il peut mesurer plus de deux mètres et remonte régulièrement à la surface pour respirer de l’air.',
+ 'The arapaima lives in freshwater in the Amazon basin. It can grow over two metres long and regularly comes to the surface to breathe air.']}, 
+
+{id:10,groupId:3,names:['Albino-Antennenwels (Longfin)','Ancistrus albinos à longues nageoires','Longfin Albino Bristlenose Pleco'],latin:'Ancistrus sp.',water:0,habitat:[
+ 'Süsswasserflüsse und Bäche Südamerikas',
+ 'Rivières et ruisseaux d’eau douce d’Amérique du Sud',
+ 'Freshwater rivers and streams of South America'
+],description:[
+ 'Der Albino-Antennenwels mit langen Flossen ist eine Zuchtform des Antennenwelses. Er lebt am Boden, besitzt auffällig lange Flossen und ernährt sich unter anderem von Algen und pflanzlicher Nahrung. Er erreicht eine Länge von etwa 10–15 cm.',
+ 'L’ancistrus albinos à longues nageoires est une variété d’élevage. Il vit au fond de l’eau, possède de longues nageoires et se nourrit notamment d’algues et de végétaux. Il atteint environ 10 à 15 cm.',
+ 'The Longfin Albino Bristlenose Pleco is a selectively bred variety. It is a bottom-dwelling fish with long fins and feeds on algae and plant-based foods. It grows to approximately 10–15 cm.'
+]},
+{id:11,groupId:3,names:['Prachtschmerle','Loche-clown','Clown Loach'],latin:'Chromobotia macracanthus',water:0,habitat:[
+ 'Flüsse und Überschwemmungsgebiete auf Sumatra und Borneo',
+ 'Rivières et plaines inondables de Sumatra et de Bornéo',
+ 'Rivers and floodplains of Sumatra and Borneo'
+],description:[
+ 'Die Prachtschmerle ist ein tropischer Süsswasserfisch aus Südostasien. Sie besitzt einen orangefarbenen Körper mit drei schwarzen Streifen und lebt gerne in Gruppen. Ausgewachsene Tiere können etwa 30 cm lang werden.',
+ 'La loche-clown est un poisson tropical d’eau douce originaire d’Asie du Sud-Est. Elle possède un corps orange avec trois bandes noires et vit en groupe. Les adultes peuvent atteindre environ 30 cm.',
+ 'The Clown Loach is a tropical freshwater fish from Southeast Asia. It has an orange body with three black stripes and prefers living in groups. Adults can reach approximately 30 cm in length.'
+]},
+{id:12,groupId:3,names:['Kobaltblauer Zebrabuntbarsch','Cichlidé zèbre bleu cobalt','Cobalt Blue Zebra Cichlid'],latin:'Maylandia callainos',water:0,habitat:[
+ 'Felsige Küstenbereiche des Malawisees in Ostafrika',
+ 'Zones rocheuses du lac Malawi en Afrique de l’Est',
+ 'Rocky shores of Lake Malawi in East Africa'
+],description:[
+ 'Der kobaltblaue Zebrabuntbarsch ist ein afrikanischer Buntbarsch aus dem Malawisee. Er besitzt eine kräftige blaue Färbung, lebt in felsigen Gebieten und kann territorial sein. Er erreicht etwa 10–13 cm Länge.',
+ 'Le cichlidé zèbre bleu cobalt est originaire du lac Malawi en Afrique. Il possède une coloration bleu intense, vit dans les zones rocheuses et peut être territorial. Il mesure environ 10 à 13 cm.',
+ 'The Cobalt Blue Zebra Cichlid is an African cichlid native to Lake Malawi. It has a vibrant blue colour, inhabits rocky areas and can be territorial. It grows to approximately 10–13 cm.'
+]}
 ];
 // Each sale record references one species. A species derives its group from speciesRows.
 const seedArticles=[
  {id:'tier-1',speciesId:1,price:52},{id:'tier-2',speciesId:2,price:15000},
  {id:'tier-3',speciesId:3,price:2500},{id:'tier-4',speciesId:4,price:16.49},
  {id:'tier-5',speciesId:5,price:350},{id:'tier-6',speciesId:6,price:8000},
- {id:'tier-7',speciesId:7,price:4500},{id:'tier-8',speciesId:8,price:250}
+ {id:'tier-7',speciesId:7,price:4500},{id:'tier-8',speciesId:8,price:250}, 
+ {id:'tier-9',speciesId:9,price:2300}, {id:'tier-10',speciesId:10,price:24.90},
+ {id:'tier-11',speciesId:11,price:19.90},
+ {id:'tier-12',speciesId:12,price:14.90}
+
+
 ].map(a=>({...a,stock:10,old:0}));
 const tx=a=>tr(...a);
 const groupById=id=>groupRows.find(g=>g.id===id);

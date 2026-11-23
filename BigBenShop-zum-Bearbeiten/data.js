@@ -28,4 +28,19 @@ const reviews=id=>[...(baseReviews[id]||[]).map(score=>({score,demo:true})),...r
 const stars=id=>{const r=reviews(id);return r.length?'★ '+(r.reduce((n,x)=>n+x.score,0)/r.length).toFixed(1)+' <small>('+r.length+')</small>':'—'};
 if(!sessionStorage.getItem('ww.visit')){put('visits',read('visits',0)+1);sessionStorage.setItem('ww.visit','1')}
 
-
+gearArchive.push({
+  id: 'g3',
+  c: 'Zubehör',
+  brand: 'BigBenShop',
+  name: 'Futterdose',
+  price: 6.90,
+  old: 0,
+  style: 2,
+  variants: ['500 ml, 600ml'],
+  stock: 12,
+  desc: [
+    'Dose zur Aufbewahrung von Fischfutter.',
+    'Boîte pour conserver la nourriture pour poissons.',
+    'Container for storing fish food.'
+  ]
+});
