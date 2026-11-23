@@ -77,10 +77,22 @@ motionSetting?.addEventListener('change',e=>setPortraitPause(e.matches));
 
 function card(p){return `<article class="product speciesCard"><div class="prodImg">${link('product/'+p.id,photo(p.image,p.name))}<button class="save ${fav().includes(p.id)?'saved':''}" data-act="fav:${p.id}" aria-label="${wishlist()} · ${esc(p.name)}" aria-pressed="${fav().includes(p.id)}">${ic('heart',16)}</button></div><div class="speciesInfo"><div class="brand">${esc(p.speciesId?catTitle(p.c):gearGroup(p.c))}</div><h3>${link('product/'+p.id,esc(p.name))}</h3><em class="latin">${esc(p.speciesId?p.latin:p.brand+' · '+p.variants[0])}</em><p class="price">${money(p.price)} ${p.speciesId?`<small>/ ${tr('Tier','animal','animal')}</small>`:p.old>p.price?`<del>${money(p.old)}</del>`:''}</p></div></article>`}
 let homeGroup='';
+function homeProductGroups(){
+ const categories = Object.keys(equipmentGroups);
+ const gear = equipmentItems();
+ const categoryLink = key => link("produkte/" + key, key === "tiere" ? tr("Tiere","Animaux","Animals") : gearGroup(key));
+ const navigation = ["tiere", ...categories].map(categoryLink).join("");
+ const groups = categories.map(key => {
+   const items = gear.filter(product => product.c === key);
+   if (!items.length) return "";
+   return `<section class="homeProductGroup" aria-labelledby="homeGroup-${key}"><h3 id="homeGroup-${key}">${categoryLink(key)}</h3><div class="productGrid">${items.map(card).join("")}</div></section>`;
+ }).join("");
+ return `<nav class="catalogNav" aria-label="${tr("Produktkategorien","Catégories de produits","Product categories")}">${navigation}</nav>${groups}`;
+}
 function home(){
  const animals=products();
  return hero()+`<section class="wrap section homeAnimals" aria-labelledby="homeAnimalsTitle"><div class="sectionHead"><h1 id="homeAnimalsTitle">${tr('Tiere','Animaux','Animals')}</h1>${link('overview',tr('Artenübersicht','Tableau des espèces','Species index'),'textLink')}</div><div class="productGrid">${animals.map(card).join('')}</div></section>
- <section class="popular" aria-labelledby="homeProductsTitle"><div class="wrap section"><div class="sectionHead"><h2 id="homeProductsTitle">${equipmentTitle()}</h2>${link('produkte',tr('Produkte filtern','Filtrer les produits','Filter products'),'textLink')}</div><div class="productGrid">${equipmentItems().map(card).join('')}</div></div></section>
+ <section class="popular" aria-labelledby="homeProductsTitle"><div class="wrap section"><div class="sectionHead"><h2 id="homeProductsTitle">${equipmentTitle()}</h2>${link('produkte',tr('Produkte filtern','Filtrer les produits','Filter products'),'textLink')}</div>${homeProductGroups()}</div></section>
  <section class="wrap section" aria-labelledby="homeOffersTitle"><div class="sectionHead"><h2 id="homeOffersTitle">${tr('Angebote von Kunden','Annonces des membres','Customer listings')}</h2>${link('community',tr('Zur Community','Voir la communauté','Explore community'),'textLink')}</div><div id="communityList" data-home="true" aria-live="polite"><p>${tr('Angebote werden geladen …','Chargement des annonces …','Loading listings …')}</p></div></section>
  <section class="popular" aria-labelledby="createOfferTitle"><div class="wrap section"><div class="sectionHead"><h2 id="createOfferTitle">${tr('Dein Angebot erstellen','Créer votre annonce','Create your listing')}</h2></div><div id="homeOfferForm" class="homeOfferForm"></div></div></section>`;
 }
