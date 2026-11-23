@@ -70,5 +70,13 @@ const equipmentCredits = [
     "url": "https://commons.wikimedia.org/wiki/File:Fischfutter-Flocken.JPG",
     "license": "CC BY-SA 3.0",
     "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "id": "f2",
+    "author": "",
+    "title": "Tropical Fischfutter Granulat",
+    "url": "https://www.tetra-fish.com/products/nutrition/tetramin-tropical-granules",
+    "license": "",
+    "licenseUrl": ""
   }
 ];

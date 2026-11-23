@@ -9,19 +9,25 @@ const equipmentGroups={
  gear:['Zubehör','Accessoires','Accessories']
 };
 const gearTypes=()=>[tr('Spinnfischen','Pêche au lancer','Spin fishing'),tr('Fliegenfischen','Pêche à la mouche','Fly fishing'),tr('Allround','Polyvalent','All-round')];
-const feed={id:'f1',c:'food',brand:'BigBenShop',name:'Flockenfutter',price:8.90,old:0,style:-1,variants:['100 g'],stock:24,
+const feed={id:'f1',c:'food',brand: 'Tetra',name:'Flockenfutter',price:8.90,old:0,style:-1,variants:['100 g'],stock:24,
  desc:['Feines Flockenfutter für Aquarienfische. Die 100-g-Packung lässt sich für kleine Portionen leicht dosieren.','Nourriture en flocons pour poissons d’aquarium. Le paquet de 100 g se prête au dosage en petites portions.','Flake food for aquarium fish. The 100 g pack makes it easy to portion out small servings.']};
 const gearGroup=c=>tx(equipmentGroups[c]||equipmentGroups.gear);
+const feed2 = {id: 'f2',c: 'food',brand: 'Tetra',name: 'TetraMin Tropical Granules',price: 7.90,old: 0,style: -1,variants: ['100 g'],stock: 24,desc: [
+'Granulatfutter für kleine tropische Aquarienfische. Die 100-g-Packung lässt sich einfach dosieren.',
+'Aliment en granulés pour les petits poissons tropicaux d’aquarium. Le pot de 100 g permet un dosage facile.',
+'Granulated food for small tropical aquarium fish. The 100 g container makes portioning easy.']
+};
+
 const allItems=()=>[...products(),...equipmentItems()];
 const item=id=>allItems().find(p=>p.id===id);
 function equipmentItems(){
- const byId=new Map([feed,...gearArchive].map(p=>[p.id,p]));
+ const byId=new Map([feed,feed2,...gearArchive].map(p=>[p.id,p]));
  for(const p of read('products',[]))if(!p.speciesId&&p.id&&!p.id.startsWith('tier-'))byId.set(p.id,p);
  const edits=read('equipmentEdits',{}),fallback={rods:'r1',reels:'m1',lures:'l1',gear:'g1',food:'f1'};
  return [...byId.values()].map(base=>{
-  const p={...base,...edits[base.id]},photoId=[feed,...gearArchive].some(s=>s.id===p.id)?p.id:fallback[p.c]||'g1';
+  const p={...base,...edits[base.id]},photoId=[feed,feed2,...gearArchive].some(s=>s.id===p.id)?p.id:fallback[p.c]||'g1';
   if(p.id==='f1'&&p.name==='Flockenfutter')p.name=tr('Flockenfutter','Flocons pour poissons','Fish flakes');
-  return {...p,image:'equipment-photos/'+photoId+'.jpg'};
+  return {...p,image:'equipment-photos/'+(p.photoId || photoId)+'.jpg'};
  });
 }
 function restoreSavedGear(){
